@@ -1,37 +1,19 @@
 <?php
+session_start();
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Http\Stream;
 require 'vendor/autoload.php';
-require 'utility/corsMiddeware.class.php';
-$configuration = [
-	'settings' => [
-		'displayErrorDetails' => true,
-	],
-	'cors_settings' => [
-		'origin' => '*',
-		// 'headers' => '',
-		// 'methods' => 'PUT',
-		'age' => 43200,
-	],
-];
-$c = new Slim\Container($configuration);
-$c['cors'] = function ($c) {
-	return new CorsMiddleware($c['cors_settings']);
-};
 
-$app = new Slim\App($c);
-// $app->add(function (Request $req, Response $res, $next) {
-// 	// $res->getBody()->write(json_encode($req->getHeaders()));
-// 	// return $res->withHeader("Access-Control-Allow-Origin", '*');
-// 	$response = $next($req, $res);
-// 	return $response->withHeader("Access-Control-Allow-Origin", '*');
-// });
+$container = require_once 'configuration/container.php';
+$app = new Slim\App($container);
 
-$app->add($c->get('cors'));
+$app->add($container->get('cors'));
 
-$app->get('/', function ($req, $res, $args) use ($app) {
-	return $res->withHeader('Content-Length', '100000000000');
+$app->get('/', function ($req, $res, $args) {
+	$db = $this->get('db');
+
+	//return $res->withHeader('Content-Length', '100000000000');
 });
 
 $app->get('/image', function (Request $request, Response $response, $args) {
@@ -43,20 +25,17 @@ $app->get('/image', function (Request $request, Response $response, $args) {
 		->withHeader('Content-Length', filesize($image))
 		->withBody($body);
 });
-$app->get('/container', function ($req, $res, $args) use ($app) {
-	echo 123;
-});
 
-$app->group('/tests', function () use ($app) {
+$app->group('/tests', function () {
 	require_once 'routes/tests.api.php';
 });
 
-$app->group('/root', function () use ($app) {
-	$app->get('/leaf1', function () use ($app) {
+$app->group('/root', function () {
+	$app->get('/leaf1', function () {
 		echo 'leaf1';
 	});
-	$app->group('/leaf2', function () use ($app) {
-		$app->get('/leaf3', function () use ($app) {
+	$app->group('/leaf2', function () {
+		$app->get('/leaf3', function () {
 			echo 'leaf3 in leaf2';
 		});
 	});
