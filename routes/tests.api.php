@@ -1,4 +1,6 @@
 <?php
+// require 'utility/authMiddeware.class.php';
+
 $app->get('/[{name}]', function ($req, $res, $args) {
-	echo json_encode($args);
-});
+	$route = $req->getAttribute('route');
+})->add(AuthMiddleware::class);

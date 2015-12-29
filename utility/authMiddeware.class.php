@@ -20,4 +20,12 @@ class AuthMiddleware {
 		return $response;
 	}
 
+	private function auth() {
+
+	}
+
+	private function decodeToken() {
+
+	}
+
 }

@@ -11,8 +11,7 @@ $app = new Slim\App($container);
 $app->add($container->get('cors'));
 
 $app->get('/', function ($req, $res, $args) {
-	$db = $this->get('db');
-
+	echo 'index';
 	//return $res->withHeader('Content-Length', '100000000000');
 });
 
@@ -26,16 +25,16 @@ $app->get('/image', function (Request $request, Response $response, $args) {
 		->withBody($body);
 });
 
-$app->group('/tests', function () {
+$app->group('/tests', function () use ($app) {
 	require_once 'routes/tests.api.php';
 });
 
 $app->group('/root', function () {
-	$app->get('/leaf1', function () {
+	$this->get('/leaf1', function () {
 		echo 'leaf1';
 	});
-	$app->group('/leaf2', function () {
-		$app->get('/leaf3', function () {
+	$this->group('/leaf2', function () {
+		$this->get('/leaf3', function () {
 			echo 'leaf3 in leaf2';
 		});
 	});
