@@ -3,6 +3,7 @@ session_start();
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Http\Stream;
+
 require 'vendor/autoload.php';
 
 $container = require_once 'configuration/container.php';
@@ -11,6 +12,15 @@ $app = new Slim\App($container);
 $app->add($container->get('cors'));
 
 $app->get('/', function ($req, $res, $args) {
+	$db = $this->get('db');
+	$data = $db->select("user", '*');
+	// $data = $db->insert("user", [
+	// 	'username' => 'user',
+	// 	'email' => 'user@domain.com',
+	// 	'password' => 'userpwd',
+	// ]);
+	var_dump($data);
+	echo $db->last_query();
 	echo 'index';
 	//return $res->withHeader('Content-Length', '100000000000');
 });
@@ -36,7 +46,7 @@ $app->group('/root', function () {
 	$this->group('/leaf2', function () {
 		$this->get('/leaf3', function () {
 			echo 'leaf3 in leaf2';
-		});
+		})->add(AuthMiddleware::class);
 	});
 });
 

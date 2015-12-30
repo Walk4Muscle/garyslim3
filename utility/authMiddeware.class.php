@@ -15,6 +15,7 @@ class AuthMiddleware {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+		$response->getBody()->write($request->getUri()->getPath());
 		$response = $next($request, $response);
 
 		return $response;
