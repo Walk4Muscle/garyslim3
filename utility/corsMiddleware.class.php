@@ -10,6 +10,7 @@ class CorsMiddleware {
 	private $cors_age;
 
 	public function __construct($settings) {
+		// var_dump($settings);
 		if (isset($settings['origin'])) {
 			$this->cors_origin = $settings['origin'];
 		}
@@ -34,6 +35,7 @@ class CorsMiddleware {
 	 * @return \Psr\Http\Message\ResponseInterface
 	 */
 	public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next) {
+		// $response = $response->withHeader('Content-Length', '100000000000');
 		if (isset($this->cors_origin)) {
 			$response = $response->withHeader("Access-Control-Allow-Origin", $this->cors_origin);
 		}

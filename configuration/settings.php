@@ -32,5 +32,6 @@ return [
 		'database_file' => 'db/test.s3db',
 	],
 	'auth_settings' => [
+		'serect' => 'garyAPIserver',
 	],
 ];

@@ -9,7 +9,7 @@ require 'vendor/autoload.php';
 $container = require_once 'configuration/container.php';
 $app = new Slim\App($container);
 
-$app->add($container->get('cors'));
+$app->add($app->get('cors'));
 
 $app->get('/', function ($req, $res, $args) {
 	$db = $this->get('db');
@@ -37,6 +37,10 @@ $app->get('/image', function (Request $request, Response $response, $args) {
 
 $app->group('/tests', function () use ($app) {
 	require_once 'routes/tests.api.php';
+});
+
+$app->group('/auth', function () {
+	require_once 'routes/auth.api.php';
 });
 
 $app->group('/root', function () {
