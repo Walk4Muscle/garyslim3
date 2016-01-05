@@ -5,6 +5,7 @@ require_once 'utility/corsMiddleware.class.php';
 require_once 'utility/authMiddleware.class.php';
 $configuration = require_once 'settings.php';
 $container = new Slim\Container($configuration);
+$container['secret'] = $configuration['secret'];
 $container['cors'] = function ($c) {
 	return new CorsMiddleware($c['cors_settings']);
 };

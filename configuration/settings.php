@@ -1,5 +1,6 @@
 <?php
 return [
+	'secret' => 'garyAPIserverserectKey',
 	'settings' => [
 		'displayErrorDetails' => true,
 	],
@@ -32,6 +33,6 @@ return [
 		'database_file' => 'db/test.s3db',
 	],
 	'auth_settings' => [
-		'serect' => 'garyAPIserver',
+		'secret' => 'garyAPIserverserectKey',
 	],
 ];
