@@ -5,9 +5,16 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Slim\Http\Stream;
 
 require 'vendor/autoload.php';
+/**
+ * init app
+ **/
+$configuration = require_once 'configuration/settings.php';
+$app = new Slim\App($configuration);
 
-$container = require_once 'configuration/container.php';
-$app = new Slim\App($container);
+/**
+ * load dependency injection
+ */
+require_once 'configuration/dependencies.php';
 
 $app->add($container->get('cors'));
 
@@ -35,24 +42,7 @@ $app->get('/image', function (Request $request, Response $response, $args) {
 		->withBody($body);
 });
 
-$app->group('/tests', function () use ($app) {
-	require_once 'routes/tests.api.php';
-});
-
-$app->group('/auth', function () use ($app) {
-	require_once 'routes/auth.api.php';
-});
-
-$app->group('/root', function () {
-	$this->get('/leaf1', function () {
-		echo 'leaf1';
-	});
-	$this->group('/leaf2', function () {
-		$this->get('/leaf3', function () {
-			echo 'leaf3 in leaf2';
-		})->add(AuthMiddleware::class);
-	});
-});
+require_once 'routes/routes.php';
 
 $app->run();
 
