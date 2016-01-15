@@ -17,9 +17,9 @@ class CorsMiddleware {
 		if (isset($settings['headers'])) {
 			$this->cors_header = is_string($settings['headers']) ? $settings['headers'] : implode("," . " ", $settings['headers']);
 		}
-		// if (isset($settings['methods'])) {
-		// 	$this->cors_methods = is_string($settings['methods']) ? $settings['methods'] : implode("," . " ", $settings['methods']);
-		// }
+		if (isset($settings['methods'])) {
+			$this->cors_methods = is_string($settings['methods']) ? $settings['methods'] : implode("," . " ", $settings['methods']);
+		}
 		if (isset($settings['age'])) {
 			$this->cors_age = $settings['age'];
 		}
@@ -42,9 +42,9 @@ class CorsMiddleware {
 		if (isset($this->cors_header)) {
 			$response = $response->withHeader("Access-Control-Allow-Headers", $this->cors_header);
 		}
-		// if (isset($this->cors_methods)) {
-		// 	$response = $response->withHeader("Access-Control-Allow-Headers", $this->cors_methods);
-		// }
+		if (isset($this->cors_methods)) {
+			$response = $response->withHeader("Access-Control-Allow-Methods", $this->cors_methods);
+		}
 		if (isset($this->cors_age)) {
 			$response = $response->withHeader("Access-Control-Max-Age", $this->cors_age);
 		}

@@ -25,6 +25,10 @@ $container['logger'] = function ($c) {
 $container['token'] = function ($c) {
 	return new Token($c['secret']);
 };
+
+$container['initPWD'] = function ($c) {
+	return $c->get('settings')['initPWD'];
+};
 // $basic_auth = new AuthMiddleware($configuration['auth_settings']);
 // $container->register($basic_auth);
 // return $container;

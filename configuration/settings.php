@@ -2,6 +2,7 @@
 return [
 	'settings' => [
 		'displayErrorDetails' => true,
+		'initPWD' => '123456',
 		'secret' => 'garyAPIserverserectKey',
 		'logger' => [
 			'name' => 'slimApp',
@@ -9,8 +10,8 @@ return [
 		],
 		'cors' => [
 			'origin' => '*',
-			// 'headers' => '',
-			// 'methods' => 'PUT',
+			'headers' => 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+			'methods' => 'PUT,POST,GET,DELETE,OPTIONS',
 			'age' => 43200,
 		],
 		'db' => [
@@ -20,10 +21,10 @@ return [
 			 **/
 			// 'database_type' => 'mysql',
 			// 'database_name' => 'test',
-			// 'server' => 'localhost',
-			// 'username' => 'root',
-			// 'password' => 'root',
-			// 'charset' => 'utf8',
+			// 'server'        => 'localhost',
+			// 'username'      => 'root',
+			// 'password'      => 'root',
+			// 'charset'       => 'utf8',
 			// // [optional]
 			// 'port' => 3306,
 			// // [optional] Table prefix
