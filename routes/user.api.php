@@ -4,19 +4,12 @@ $app->put('/', function ($req, $res, $args) {
 	// $this->get('logger')->info(json_encode($req->getParsedBody()));
 	if ($req->getParsedBody()) {
 		$data = $req->getParsedBody();
-		$db = $this->get('db');
-		// $data = isset($args['id']) ? $db->select('user', '*', ['id' => $args['id']]) : $db->select('user', '*', ['LIMIT' => 1]);
 		$data['password'] = base64_encode($this->get('initPWD') . $this->get('secret'));
-		$data = $db->insert('user', $data);
+		// $data = $db->insert('user', $data);
+		$model = new userModel();
+		$result = $model->add($data);
 		// echo $db->last_query();
-		// $this->get('logger')->info(($data));
-		if ($data > 0) {
-			return $res->write(json_encode(['status' => true]));
-		} else {
-			$returndata = json_encode(['status' => false, 'error' => $db->error(), 'last_query' => $db->last_query()]);
-			// $this->get('logger')->info(json_encode($returndata));
-			return $res->write($returndata);
-		}
+		return $res->write(json_encode($result));
 	} else {
 		return $res->withStatus(403)->write("No Post data!");
 	}
@@ -31,20 +24,10 @@ $app->get('/{id:[0-9]+}', function ($req, $res, $args) {
 $app->post('/{id:[0-9]+}', function ($req, $res, $args) {
 	if ($req->getParsedBody()) {
 		$data = $req->getParsedBody();
-		$db = $this->get('db');
+		$model = new userModel();
 		// $data = isset($args['id']) ? $db->select('user', '*', ['id' => $args['id']]) : $db->select('user', '*', ['LIMIT' => 1]);
-		$id = $data['id'];
-		unset($data['id']);
-		unset($data['password']);
-		$data = $db->update('user', $data, ['id' => $id]);
-		// echo $db->last_query();
-		if ($data) {
-			return $res->write(json_encode(['status' => true]));
-		} else {
-			$returndata = json_encode(['status' => false, 'error' => $db->error(), 'last_query' => $db->last_query()]);
-			// $this->get('logger')->info(json_encode($returndata));
-			return $res->write($returndata);
-		}
+		$result = $model->update($data);
+		return $res->write(json_encode($result));
 	} else {
 		return $res->withStatus(403)->write("No Post data!");
 	}
@@ -60,6 +43,7 @@ $app->delete('/{id:[0-9]+}', function ($req, $res, $args) {
 		return $res->write($returndata);
 	}
 });
+
 $app->get('/list[/{page:[0-9]+}[/{size:[0-9]+}]]', function ($req, $res, $args) {
 	$page = isset($args['page']) ? $args['page'] : 0;
 	$size = isset($args['size']) ? $args['size'] : 10;

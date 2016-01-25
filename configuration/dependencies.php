@@ -32,3 +32,23 @@ $container['initPWD'] = function ($c) {
 // $basic_auth = new AuthMiddleware($configuration['auth_settings']);
 // $container->register($basic_auth);
 // return $container;
+
+/**
+include all model classes
+ **/
+$model_dir = 'models';
+// foreach (scandir($model_dir, 1) as $file) {
+// 	include_once $model_dir . '/' . $file;
+// }
+if ($handle = opendir($model_dir)) {
+
+	while (false !== ($entry = readdir($handle))) {
+
+		if ($entry != "." && $entry != "..") {
+
+			include_once $model_dir . '/' . $entry;
+		}
+	}
+
+	closedir($handle);
+}
