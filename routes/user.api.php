@@ -33,15 +33,11 @@ $app->post('/{id:[0-9]+}', function ($req, $res, $args) {
 	}
 });
 $app->delete('/{id:[0-9]+}', function ($req, $res, $args) {
-	$db = $this->get('db');
-	$data = $db->delete('user', ['id' => $args['id']]);
-	if ($data) {
-		return $res->write(json_encode(['status' => true]));
-	} else {
-		$returndata = json_encode(['status' => false, 'error' => $db->error(), 'last_query' => $db->last_query()]);
-		// $this->get('logger')->info(json_encode($returndata));
-		return $res->write($returndata);
-	}
+	// $db = $this->get('db');
+	// $data = $db->delete('user', ['id' => $args['id']]);
+	$model = new userModel();
+	$result = $model->delete($args['id']);
+	return $res->write(json_encode($result));
 });
 
 $app->get('/list[/{page:[0-9]+}[/{size:[0-9]+}]]', function ($req, $res, $args) {

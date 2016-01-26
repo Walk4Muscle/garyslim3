@@ -27,14 +27,14 @@ class medooHelper {
 	public function add($data) {
 		$db = $this->db;
 		$result = $db->insert($this->_table, $data);
-		$return;
-		if ($result > 0) {
-			$return = ['status' => true];
-		} else {
-			$return = ['status' => false, 'error' => $db->error()];
-			$log_item = array_merge($return, ['last_query' => $db->last_query()]);
-			$this->logError($log_item);
-		}
+		$return = $this->resultHander($result);
+		// if ($result > 0) {
+		// 	$return = ['status' => true];
+		// } else {
+		// 	$return = ['status' => false, 'error' => $db->error()];
+		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+		// 	$this->logError($log_item);
+		// }
 		return $this->returndata($return);
 	}
 
@@ -51,18 +51,33 @@ class medooHelper {
 			$where = ['id' => $id];
 		}
 		$result = $db->update($this->_table, $data, $where);
-		if ($result > 0) {
-			$return = ['status' => true];
-		} else {
-			$return = ['status' => false, 'error' => $db->error()];
-			$log_item = array_merge($return, ['last_query' => $db->last_query()]);
-			$this->logError($log_item);
-		}
+		$return = $this->resultHander($result);
+		// if ($result > 0) {
+		// 	$return = ['status' => true];
+		// } else {
+		// 	$return = ['status' => false, 'error' => $db->error()];
+		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+		// 	$this->logError($log_item);
+		// }
 		return $this->returndata($return);
 	}
 
-	public function delete() {
-
+	public function delete($where) {
+		$db = $this->db;
+		if (is_array($where)) {
+			$result = $db->delete($this->_table, $where);
+		} else {
+			$result = $db->delete($this->_table, [$this->pk => $where]);
+		}
+		$return = $this->resultHander($result);
+		// if ($result > 0) {
+		// 	$return = ['status' => true];
+		// } else {
+		// 	$return = ['status' => false, 'error' => $db->error()];
+		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+		// 	$this->logError($log_item);
+		// }
+		return $this->returndata($return);
 	}
 
 	public function getClassName() {
@@ -95,5 +110,16 @@ class medooHelper {
 
 	private function logError($data) {
 		$this->logger->error(json_encode($data));
+	}
+
+	private function resultHander($result) {
+		if ($result > 0) {
+			$return = ['status' => true];
+		} else {
+			$return = ['status' => false, 'error' => $db->error()];
+			$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+			$this->logError($log_item);
+		}
+		return $return;
 	}
 }
