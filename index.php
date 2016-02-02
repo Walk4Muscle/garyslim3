@@ -34,7 +34,7 @@ $app->get('/', function ($req, $res, $args) {
 	// ]);
 	// var_dump($data);
 	// echo $db->last_query();
-	// echo 'index';
+	echo 'index';
 	// return $res->withHeader('Content-Length', '819');
 });
 

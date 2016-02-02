@@ -2,7 +2,7 @@
 
 class medooHelper {
 	/**
-	name of table
+	 * name of table
 	 **/
 	protected $_table;
 
@@ -24,6 +24,34 @@ class medooHelper {
 		}
 	}
 
+	public function get($id, $field = null) {
+		$db = $this->db;
+		$result = $db->select($this->_table, $field ? $field : '*', [$this->pk => $id]);
+		return $this->returnData($result);
+	}
+
+	/**
+	 * $option array
+	 * $option['field'] string
+	 * $option['where'] array http://medoo.in/api/where
+	 **/
+	public function listData($option = null) {
+		$db = $this->db;
+		if (!isset($option)) {
+			$result = $db->select($this->_table, '*');
+		} else {
+			if (isset($option['field']) && isset($option['where'])) {
+				$result = $db->select($this->_table, $option['field'], $option['where']);
+			} elseif (isset($option['field'])) {
+				# code...
+				$result = $db->select($this->_table, $option['field']);
+			} elseif (isset($option['where'])) {
+				$result = $db->select($this->_table, '*', $option['where']);
+			}
+		}
+		return $this->returnData($result);
+	}
+
 	public function add($data) {
 		$db = $this->db;
 		$result = $db->insert($this->_table, $data);
@@ -35,7 +63,7 @@ class medooHelper {
 		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
 		// 	$this->logError($log_item);
 		// }
-		return $this->returndata($return);
+		return $this->returnData($return);
 	}
 
 	public function update($data, $where = null) {
@@ -59,7 +87,7 @@ class medooHelper {
 		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
 		// 	$this->logError($log_item);
 		// }
-		return $this->returndata($return);
+		return $this->returnData($return);
 	}
 
 	public function delete($where) {
@@ -70,14 +98,7 @@ class medooHelper {
 			$result = $db->delete($this->_table, [$this->pk => $where]);
 		}
 		$return = $this->resultHander($result);
-		// if ($result > 0) {
-		// 	$return = ['status' => true];
-		// } else {
-		// 	$return = ['status' => false, 'error' => $db->error()];
-		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
-		// 	$this->logError($log_item);
-		// }
-		return $this->returndata($return);
+		return $this->returnData($return);
 	}
 
 	public function getClassName() {
@@ -92,7 +113,7 @@ class medooHelper {
 		return $this->name;
 	}
 
-	protected function returndata($data) {
+	protected function returnData($data) {
 		switch ($this->return_format) {
 		case 'array':
 			# code...
