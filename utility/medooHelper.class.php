@@ -137,8 +137,8 @@ class medooHelper {
 		if ($result > 0) {
 			$return = ['status' => true];
 		} else {
-			$return = ['status' => false, 'error' => $db->error()];
-			$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+			$return = ['status' => false, 'error' => $this->db->error()];
+			$log_item = array_merge($return, ['last_query' => $this->db->last_query()]);
 			$this->logError($log_item);
 		}
 		return $return;

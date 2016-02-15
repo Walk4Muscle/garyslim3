@@ -10,6 +10,14 @@ $app->group('/user', function () use ($app) {
 	require_once 'user.api.php';
 });
 
+$app->group('/role', function () use ($app) {
+	require_once 'role.api.php';
+});
+
+$app->group('/access', function () use ($app) {
+	require_once 'access.api.php';
+});
+
 $app->group('/auth', function () use ($app) {
 	require_once 'auth.api.php';
 });
