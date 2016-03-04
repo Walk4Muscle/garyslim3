@@ -1,5 +1,4 @@
 <?php
-
 $this->get('/', function ($req, $res, $args) {
 	$token = array(
 		"iat" => 1357999524,
@@ -8,11 +7,11 @@ $this->get('/', function ($req, $res, $args) {
 	$jwt = $this->get('token')->encode($token, $this->get('secret'));
 	echo __DIR__;
 });
-
 $this->post('/login', function ($req, $res, $args) {
 	if ($req->getParsedBody()) {
 		$data = $req->getParsedBody();
-		$data['password'] = base64_encode($data['password'] . $this->get('secret'));
+		// $data['password'] = base64_encode($data['password'] . $this->get('secret'));
+		$data['password'] = base64_encode(hash_hmac("sha256", ($data['password'] ? $data['password'] : $this->get('initPWD')), $this->get('secret'), true));
 		$db = $this->get('db');
 		if ($db->has('user', ['username' => $data['username']])) {
 			if ($db->has('user', ['AND' => $data])) {
@@ -30,7 +29,5 @@ $this->post('/login', function ($req, $res, $args) {
 		return $res->withStatus(403)->write("No Post Username or password!");
 	}
 })->setName('login');
-
 $this->get('/logout', function ($req, $res, $args) {
-
 });

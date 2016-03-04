@@ -29,7 +29,7 @@ $container['token'] = function ($c) {
 $container['initPWD'] = function ($c) {
 	return $c->get('settings')['initPWD'];
 };
-// $basic_auth = new AuthMiddleware($configuration['auth_settings']);
+// $basic_auth = new AuthMiddleware($container['secret']);
 // $container->register($basic_auth);
 // return $container;
 

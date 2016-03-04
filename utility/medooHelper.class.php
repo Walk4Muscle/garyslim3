@@ -1,19 +1,19 @@
 <?php
-
 class medooHelper {
 	/**
 	 * name of table
 	 **/
-	protected $_table;
-
-	protected $db = null;
-
+	public $_table;
+	public $db = null;
 	protected $pk = 'id';
 	protected $logger;
 	protected $return_format = 'array'; //array||json
 	protected $model_layout = 'Model';
 	protected $enable_null_update = [];
-
+	const LEFT_JOIN = "[>]";
+	const RIGH_JOIN = "[<]";
+	const FULL_JOIN = "[<>]";
+	const INNER_JOIN = "[><]";
 	public function __construct() {
 		$this->db = $GLOBALS['app']->getContainer()->get('db');
 		$this->logger = $GLOBALS['app']->getContainer()->get('logger');
@@ -23,35 +23,11 @@ class medooHelper {
 			$this->_table = $this->getClassName();
 		}
 	}
-
 	public function get($id, $field = null) {
 		$db = $this->db;
 		$result = $db->select($this->_table, $field ? $field : '*', [$this->pk => $id]);
 		return $this->returnData($result);
 	}
-
-	/**
-	 * $option array
-	 * $option['field'] string
-	 * $option['where'] array http://medoo.in/api/where
-	 **/
-	public function listData($option = null) {
-		$db = $this->db;
-		if (!isset($option)) {
-			$result = $db->select($this->_table, '*');
-		} else {
-			if (isset($option['field']) && isset($option['where'])) {
-				$result = $db->select($this->_table, $option['field'], $option['where']);
-			} elseif (isset($option['field'])) {
-				# code...
-				$result = $db->select($this->_table, $option['field']);
-			} elseif (isset($option['where'])) {
-				$result = $db->select($this->_table, '*', $option['where']);
-			}
-		}
-		return $this->returnData($result);
-	}
-
 	public function add($data) {
 		$db = $this->db;
 		$result = $db->insert($this->_table, $data);
@@ -65,7 +41,6 @@ class medooHelper {
 		// }
 		return $this->returnData($return);
 	}
-
 	public function update($data, $where = null) {
 		$db = $this->db;
 		$id = $data[$this->pk];
@@ -89,7 +64,6 @@ class medooHelper {
 		// }
 		return $this->returnData($return);
 	}
-
 	public function delete($where) {
 		$db = $this->db;
 		if (is_array($where)) {
@@ -100,6 +74,41 @@ class medooHelper {
 		$return = $this->resultHander($result);
 		return $this->returnData($return);
 	}
+	/**
+	 * $option array
+	 * $option['field'] string
+	 * $option['where'] array http://medoo.in/api/where
+	 **/
+	public function listData($option = null) {
+		$db = $this->db;
+		if (!isset($option)) {
+			$result = $db->select($this->_table, '*');
+		} else {
+			if (isset($option['field']) && isset($option['where'])) {
+				$result = $db->select($this->_table, $option['field'], $option['where']);
+			} elseif (isset($option['field'])) {
+				# code...
+				$result = $db->select($this->_table, $option['field']);
+			} elseif (isset($option['where'])) {
+				$result = $db->select($this->_table, '*', $option['where']);
+			}
+		}
+		return $this->returnData($result);
+	}
+	/**
+	 * http://medoo.in/api/select
+	 * select($table, $columns, $where)
+	table [string]
+	The table name.
+	columns [string/array]
+	The target columns of data will be fetched.
+	where (optional) [array]
+	The WHERE clause to filter records.
+	 * select($table, $join, $columns, $where)
+	 **/
+	// public function select($option) {
+	// 	$db = $this->db;
+	// }
 
 	public function getClassName() {
 		if (empty($this->name)) {
@@ -112,7 +121,6 @@ class medooHelper {
 		}
 		return $this->name;
 	}
-
 	protected function returnData($data) {
 		switch ($this->return_format) {
 		case 'array':
@@ -128,11 +136,9 @@ class medooHelper {
 			break;
 		}
 	}
-
 	private function logError($data) {
 		$this->logger->error(json_encode($data));
 	}
-
 	private function resultHander($result) {
 		if ($result > 0) {
 			$return = ['status' => true];
