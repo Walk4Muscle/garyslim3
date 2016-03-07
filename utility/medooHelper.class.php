@@ -3,8 +3,8 @@ class medooHelper {
 	/**
 	 * name of table
 	 **/
-	public $_table;
-	public $db = null;
+	protected $_table;
+	protected $db = null;
 	protected $pk = 'id';
 	protected $logger;
 	protected $return_format = 'array'; //array||json
@@ -31,14 +31,14 @@ class medooHelper {
 	public function add($data) {
 		$db = $this->db;
 		$result = $db->insert($this->_table, $data);
-		$return = $this->resultHander($result);
-		// if ($result > 0) {
-		// 	$return = ['status' => true];
-		// } else {
-		// 	$return = ['status' => false, 'error' => $db->error()];
-		// 	$log_item = array_merge($return, ['last_query' => $db->last_query()]);
-		// 	$this->logError($log_item);
-		// }
+		// $return = $this->resultHander($result);
+		if ($result > 0) {
+			$return = ['status' => true];
+		} else {
+			$return = ['status' => false, 'error' => $db->error()];
+			$log_item = array_merge($return, ['last_query' => $db->last_query()]);
+			$this->logError($log_item);
+		}
 		return $this->returnData($return);
 	}
 	public function update($data, $where = null) {
@@ -95,6 +95,13 @@ class medooHelper {
 		}
 		return $this->returnData($result);
 	}
+
+	public function getDB() {
+		return $this->db;
+	}
+	public function getTable() {
+		return $this->_table;
+	}
 	/**
 	 * http://medoo.in/api/select
 	 * select($table, $columns, $where)
@@ -139,7 +146,7 @@ class medooHelper {
 	private function logError($data) {
 		$this->logger->error(json_encode($data));
 	}
-	private function resultHander($result) {
+	protected function resultHander($result) {
 		if ($result > 0) {
 			$return = ['status' => true];
 		} else {

@@ -1,10 +1,10 @@
 <?php
 $app->put('/', function ($req, $res, $args) {
-	// var_dump($req->getParsedBody());
+	// var_dump($req->getParsedBody());exit;
 	// $this->get('logger')->info(json_encode($req->getParsedBody()));
 	if ($req->getParsedBody()) {
 		$data = $req->getParsedBody();
-		$data['password'] = base64_encode(hash_hmac("sha256", ($data['password'] ? $data['password'] : $this->get('initPWD')), $this->get('secret'), true)
+		$data['password'] = base64_encode(hash_hmac("sha256", (isset($data['password']) ? $data['password'] : $this->get('initPWD')), $this->get('secret'), true)
 		);
 		// $data = $db->insert('user', $data);
 		$model = new userModel();

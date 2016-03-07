@@ -1,5 +1,6 @@
 <?php
 $app->put('/', function ($req, $res, $args) {
+	// var_dump($req->getParsedBody());exit;
 	if ($req->getParsedBody()) {
 		$data = $req->getParsedBody();
 		$model = new accessModel();
