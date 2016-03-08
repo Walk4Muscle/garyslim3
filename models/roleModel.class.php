@@ -2,11 +2,11 @@
 require_once '/utility/medooHelper.class.php';
 
 class roleModel extends medooHelper {
-	public function listView() {
+	public function listView($where = []) {
 		$db = $this->getDB();
-		$result = $db->select("role", [
-			"[>]role_accesses" => ["id" => "role_id"],
-			"[>]accesses" => ['role_accesses.access_id' => "accesses.id"],
+		$result = $db->select("role_accesses", [
+			"[>]role" => ["role_id" => "id"],
+			"[>]accesses" => ['access_id' => "id"],
 		], [
 			"role.id",
 			"role.alias(role_alias)",
@@ -15,8 +15,7 @@ class roleModel extends medooHelper {
 			"accesses.service(service)",
 			"accesses.action(action)",
 			"accesses.alias(accesses_alias)",
-		]);
-		var_dump($db->error());
+		], $where);
 		return $this->returnData($result);
 	}
 }
