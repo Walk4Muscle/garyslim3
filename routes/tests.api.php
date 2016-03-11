@@ -16,7 +16,7 @@ $app->get('/[{name}]', function ($req, $res, $args) {
 	// var_dump($db->log());
 	// var_dump($db->error());
 	$model = new roleModel();
-	$result = $model->listview();
+	$result = $model->addAccess(1, [1, 2]);
 	var_dump($result);
 	// foreach ($result as $key => $value) {
 	// 	$value['displayname'] = $value['username'];

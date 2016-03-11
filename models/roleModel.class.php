@@ -37,18 +37,26 @@ class roleModel extends medooHelper {
 		$db = $this->getDB();
 		$insert_data = [];
 		foreach ($access_ids as $key => $value) {
+			$temp_insert_item = [];
 			if (is_integer($value)) {
-				array_push($insert_data, ['role_id' => $role_id, 'access_id' => $value]);
-			}
-			if (isset($value['access_id'])) {
-				array_push($insert_data, ['role_id' => $role_id, 'access_id' => $value['access_id']]);
+				$temp_insert_item = ['role_id' => $role_id, 'access_id' => $value];
+			} else if (isset($value['access_id'])) {
+				$temp_insert_item = ['role_id' => $role_id, 'access_id' => $value['access_id']];
 			} else {
 				$error = ['status' => false, 'error' => 'Invalid data'];
 				return $this->resultHander($error);
 			}
+			if (!$db->has('role_accesses', ['AND' => $temp_insert_item])) {
+				array_push($insert_data, $temp_insert_item);
+			}
 		}
-		$result = $db->select("role_accesses", $insert_data);
-		return $this->returnData($result);
+		// var_dump($insert_data);exit;
+		if ($insert_data) {
+			$result = $db->insert("role_accesses", $insert_data);
+			return $this->resultHander($result);
+		} else {
+			return $this->returnData(['status' => true]);
+		}
 	}
 
 	/**
@@ -66,6 +74,6 @@ class roleModel extends medooHelper {
 				"access_id" => $access_ids,
 			],
 		]);
-		return $this->resultHander($error);
+		return $this->resultHander($result);
 	}
 }
