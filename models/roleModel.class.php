@@ -1,6 +1,5 @@
 <?php
 require_once '/utility/medooHelper.class.php';
-
 class roleModel extends medooHelper {
 	/**
 	 * view role - role_access - access table
@@ -27,7 +26,6 @@ class roleModel extends medooHelper {
 		// var_dump($db->error());
 		return $this->returnData($result);
 	}
-
 	/**
 	 * @Author   Gary Liu
 	 * @DateTime 2016-03-09T23:18:37+0800
@@ -35,7 +33,7 @@ class roleModel extends medooHelper {
 	 * @param    [array(integer)|array(object)] $access_ids
 	 * @return   [array]
 	 */
-	public function access($role_id, $access_ids) {
+	public function addAccess($role_id, $access_ids) {
 		$db = $this->getDB();
 		$insert_data = [];
 		foreach ($access_ids as $key => $value) {
@@ -46,9 +44,28 @@ class roleModel extends medooHelper {
 				array_push($insert_data, ['role_id' => $role_id, 'access_id' => $value['access_id']]);
 			} else {
 				$error = ['status' => false, 'error' => 'Invalid data'];
+				return $this->resultHander($error);
 			}
 		}
 		$result = $db->select("role_accesses", $insert_data);
 		return $this->returnData($result);
+	}
+
+	/**
+	 * @Author   Gary_Liu
+	 * @DateTime 2016-03-10T17:00:55+0800
+	 * @param    [type]
+	 * @param    [type]
+	 * @return   [type]
+	 */
+	public function rmAccess($role_id, $access_ids) {
+		$db = $this->getDB();
+		$result = $db->delete("role_accesses", [
+			"AND" => [
+				"role_id" => $role_id,
+				"access_id" => $access_ids,
+			],
+		]);
+		return $this->resultHander($error);
 	}
 }
