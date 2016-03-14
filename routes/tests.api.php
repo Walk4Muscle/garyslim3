@@ -20,7 +20,8 @@ $app->get('/[{name}]', function ($req, $res, $args) {
 	// $result = $model->listview();
 	// var_dump($result);
 	$model = new userModel();
-	$result = $model->getPermission(1);
+	// $result = $model->getPermission(1);
+	$result = $model->addAccess(1, [1, 2]);
 	var_dump($result);
 	// foreach ($result as $key => $value) {
 	// 	$value['displayname'] = $value['username'];
