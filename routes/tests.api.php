@@ -1,7 +1,8 @@
 <?php
 // require 'utility/authMiddeware.class.php';
 $app->get('/[{name}]', function ($req, $res, $args) {
-	echo $req->getUri()->getPath();
+	// var_export($this->get('cors'));exit;
+	// echo $req->getUri()->getPath();
 	// var_dump($this->get('basic_auth'));
 	// $db = $GLOBALS['app']->getContainer()->get('db');
 	// $db = new medoo([
@@ -15,8 +16,11 @@ $app->get('/[{name}]', function ($req, $res, $args) {
 	// var_dump($r);
 	// var_dump($db->log());
 	// var_dump($db->error());
-	$model = new roleModel();
-	$result = $model->listview();
+	// $model = new roleModel();
+	// $result = $model->listview();
+	// var_dump($result);
+	$model = new userModel();
+	$result = $model->getPermission(1);
 	var_dump($result);
 	// foreach ($result as $key => $value) {
 	// 	$value['displayname'] = $value['username'];
@@ -25,4 +29,7 @@ $app->get('/[{name}]', function ($req, $res, $args) {
 	// $route = $req->getAttribute('route');
 	// var_dump($route);
 	// })->add(AuthMiddleware::class);
+});
+$app->post('/', function ($req, $res, $args) {
+	var_export($req->getParsedBody());
 });

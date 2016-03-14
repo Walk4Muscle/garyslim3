@@ -11,11 +11,11 @@ class roleModel extends medooHelper {
 	 */
 	public function listView($where = []) {
 		$db = $this->getDB();
-		$result = $db->select("role_accesses", [
+		$result = $db->debug()->select("role_accesses", [
 			"[>]role" => ["role_id" => "id"],
 			"[>]accesses" => ['access_id' => "id"],
 		], [
-			"role.id",
+			// "role.id",
 			"role.alias(role_alias)",
 			"role_accesses.id(role_access_id)",
 			"accesses.id(accesses_id)",
@@ -39,15 +39,14 @@ class roleModel extends medooHelper {
 		foreach ($access_ids as $key => $value) {
 			if (is_integer($value)) {
 				array_push($insert_data, ['role_id' => $role_id, 'access_id' => $value]);
-			}
-			if (isset($value['access_id'])) {
-				array_push($insert_data, ['role_id' => $role_id, 'access_id' => $value['access_id']]);
+			} else if (isset($value['access_id'])) {
+				array_push($insert_data, ['role_id' => $role_id, 'access_id' => (int) $value['access_id']]);
 			} else {
 				$error = ['status' => false, 'error' => 'Invalid data'];
 				return $this->resultHander($error);
 			}
 		}
-		$result = $db->select("role_accesses", $insert_data);
+		$result = $db->insert("role_accesses", $insert_data);
 		return $this->returnData($result);
 	}
 

@@ -50,3 +50,27 @@ $app->get('/getRoleAccess[/{id:[0-9]+}]', function ($req, $res, $args) {
 	$result = $model->listView($where);
 	return $res->write(json_encode($result));
 });
+$app->post('/addAccess/{id:[0-9]+}', function ($req, $res, $args) {
+	if ($req->getParsedBody()) {
+		$data = $req->getParsedBody();
+		$model = new roleModel();
+		$result = $model->addAccess($args['id'], $data);
+		// echo $db->last_query();
+		return $res->write(json_encode($result));
+	} else {
+		return $res->withStatus(403)->write("No Post data!");
+	}
+});
+$app->delete('/rmAccess/{id:[0-9]+}', function ($req, $res, $args) {
+	if ($req->getParsedBody()) {
+		$data = $req->getParsedBody();
+		$model = new roleModel();
+		$result = $model->rmAccess($args['id'], $data);
+		// echo $db->last_query();
+		return $res->write(json_encode($result));
+	} else {
+		return $res->withStatus(403)->write("No Post data!");
+	}
+});
+$app->post('/arrangeAccess/{id:[0-9]+}', function ($req, $res, $args) {
+});
