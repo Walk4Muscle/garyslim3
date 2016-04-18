@@ -32,5 +32,5 @@ $app->get('/[{name}]', function ($req, $res, $args) {
 	// })->add(AuthMiddleware::class);
 });
 $app->post('/', function ($req, $res, $args) {
-	var_export($req->getParsedBody());
+	var_export($req->getAttribute('token'));
 });

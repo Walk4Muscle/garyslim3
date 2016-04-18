@@ -18,7 +18,11 @@ $GLOBALS['app'] = $app;
 require_once 'configuration/dependencies.php';
 
 $app->add($container->get('cors'));
-
+$app->add(new \Slim\Middleware\JwtAuthentication([
+	"path" => '/tests',
+    "secret" => $container->get('secret'),
+    "passthrough" => '/api',
+]));
 $app->get('/', function ($req, $res, $args) {
 	// $db = $this->get('db');
 	// $data = $db->select("user", '*');

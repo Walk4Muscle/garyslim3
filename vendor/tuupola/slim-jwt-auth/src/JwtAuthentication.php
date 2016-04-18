@@ -31,9 +31,11 @@ class JwtAuthentication
     private $options = [
         "secure" => true,
         "relaxed" => ["localhost", "127.0.0.1"],
-        "environment" => "HTTP_AUTHORIZATION",
+        "environment" => ["HTTP_AUTHORIZATION", "REDIRECT_HTTP_AUTHORIZATION"],
         "cookie" => "token",
+        "attribute" => "token",
         "path" => null,
+        "passthrough" => null,
         "callback" => null,
         "error" => null
     ];
@@ -59,7 +61,8 @@ class JwtAuthentication
         /* If path was given in easy mode add rule for it. */
         if (null !== ($this->options["path"])) {
             $this->addRule(new RequestPathRule([
-                "path" => $this->options["path"]
+                "path" => $this->options["path"],
+                "passthrough" => $this->options["passthrough"]
             ]));
         }
     }
@@ -98,7 +101,8 @@ class JwtAuthentication
         /* If token cannot be decoded return with 401 Unauthorized. */
         if (false === $decoded = $this->decodeToken($token)) {
             return $this->error($request, $response, [
-                "message" => $this->message
+                "message" => $this->message,
+                "token" => $token
             ])->withStatus(401);
         }
 
@@ -110,6 +114,11 @@ class JwtAuthentication
                     "message" => $this->message || "Callback returned false"
                 ])->withStatus(401);
             }
+        }
+
+        /* Add decoded token to request as attribute when requested. */
+        if ($this->options["attribute"]) {
+            $request = $request->withAttribute($this->options["attribute"], $decoded);
         }
 
         /* Everything ok, call next middleware and return. */
@@ -157,14 +166,29 @@ class JwtAuthentication
     {
         /* If using PHP in CGI mode and non standard environment */
         $server_params = $request->getServerParams();
-        if (isset($server_params[$this->options["environment"]])) {
-            $message = "Using token from environent";
-            $header = $server_params[$this->options["environment"]];
-        } else {
-            $message = "Using token from request header";
-            $header = $request->getHeader("Authorization");
-            $header = isset($header[0]) ? $header[0] : "";
+        $header = "";
+
+        /* Check for each given environment */
+        foreach ((array) $this->options["environment"] as $environment) {
+            if (isset($server_params[$environment])) {
+                $message = "Using token from environment";
+                $header = $server_params[$environment];
+            }
         }
+
+        /* Nothing in environment, try header instead */
+        if (empty($header)) {
+            $message = "Using token from request header";
+            $headers = $request->getHeader("Authorization");
+            $header = isset($headers[0]) ? $headers[0] : "";
+        }
+
+        /* Try apache_request_headers() as last resort */
+        if (empty($header) && function_exists("apache_request_headers")) {
+            $headers = apache_request_headers();
+            $header = isset($headers["Authorization"]) ? $headers["Authorization"] : "";
+        }
+
         if (preg_match("/Bearer\s+(.*)$/i", $header, $matches)) {
             $this->log(LogLevel::DEBUG, $message);
             return $matches[1];
@@ -236,6 +260,27 @@ class JwtAuthentication
     public function setPath($path)
     {
         $this->options["path"] = $path;
+        return $this;
+    }
+
+    /**
+     * Get path which middleware ignores
+     *
+     * @return string
+     */
+    public function getPassthrough()
+    {
+        return $this->options["passthrough"];
+    }
+
+    /**
+     * Set path which middleware ignores
+     *
+     * @return self
+     */
+    public function setPassthrough($passthrough)
+    {
+        $this->options["passthrough"] = $passthrough;
         return $this;
     }
 
@@ -485,6 +530,28 @@ class JwtAuthentication
     public function setMessage($message)
     {
         $this->message = $message;
+        return $this;
+    }
+
+    /**
+     * Get the attribute name used to attach decoded token to request
+     *
+     * @return String
+     */
+    public function getAttribute()
+    {
+        return $this->options["attribute"];
+    }
+
+    /**
+     * Set the attribute name used to attach decoded token to request
+     *
+     * @param String
+     * @return self
+     */
+    public function setAttribute($attribute)
+    {
+        $this->options["attribute"] = $attribute;
         return $this;
     }
 }
